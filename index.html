@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario EPS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 40px;
+    }
+    form {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 15px;
+      margin-right: 10px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #0078d4;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Formulario EPS</h2>
+  <form id="epsForm">
+    <label for="Nombre">Nombre:</label>
+    <input type="text" id="Nombre" name="Nombre" required>
+
+    <label for="Descripcion">Descripcion:</label>
+    <input type="text" id="Descripcion" name="Descripcion" required>
+
+    <label for="Costo">Costo:</label>
+    <input type="text" id="Costo" name="Costo" required>
+    <div>
+      <button type="button" id="btnConsultar">Consultar</button>
+      <button type="button" id="btnCrear">Crear</button>
+    </div>
+  </form>
+
+  <script>
+    const API_URL = "http://localhost:8080/infoPlanSalud"; // Ajusta tu endpoint
+
+    // Evento para el botón "Consultar" (GET)
+    document.getElementById("btnConsultar").addEventListener("click", async () => {
+      const Nombre = document.getElementById("Nombre").value.trim();
+      if (!Nombre) {
+        alert("Por favor, ingresa un nombre para consultar.");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:8080/infoPlanSalud?Nombre="+Nombre, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        if (!response.ok) throw new Error("Error al consultar.");
+
+        const data = await response.json();
+        document.getElementById("Descripcion").value = data.Descripcion;
+		document.getElementById("Costo").value = data.Costo;
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo consultar el plan salud.");
+      }
+    });
+
+    // Evento para el botón "Crear" (POST)
+    document.getElementById("btnCrear").addEventListener("click", async () => {
+      const Nombre = document.getElementById("Nombre").value.trim();
+      const Descripcion = document.getElementById("Descripcion").value.trim();
+      const Costo = document.getElementById("Costo").value.trim();
+
+      if (!Nombre || !Descripcion || !Costo) {
+        alert("Por favor, completa todos los campos.");
+        return;
+      }
+
+      const planSalud = { Nombre, Descripcion, Costo };
+
+      try {
+        const response = await fetch("http://localhost:8080/crearPlanSalud", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(planSalud)
+        });
+
+        if (!response.ok) throw new Error("Error al crear el plan de salud.");
+
+        alert("Plan de salud creado correctamente.");
+        document.getElementById("epsForm").reset();
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo crear el plan de salud.");
+      }
+    });
+  </script>
+</body>
+</html>
