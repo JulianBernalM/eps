@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - EPS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f0ff;
+            padding: 40px;
+        }
+
+        form {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        h2 {
+            color: #6a0dad;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 15px;
+            margin-right: 10px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #6a0dad;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #4b0082;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Gestión de Usuarios</h2>
+    <form id="usuarioForm">
+        <label for="Nombre">Nombre:</label>
+        <input type="text" id="Nombre" name="Nombre" required>
+
+        <label for="Contraseña">Contraseña:</label>
+        <input type="password" id="Contraseña" name="Contraseña" required>
+
+        <label for="Email">Email:</label>
+        <input type="email" id="Email" name="Email" required>
+
+        <label for="Rol">Rol:</label>
+        <select id="Rol" name="Rol" required>
+            <option value="">Seleccione...</option>
+            <option value="afiliado">Afiliado</option>
+            <option value="profesional">Personal</option>
+        </select>
+
+        <label for="fk_Afiliado_ID">Afiliado ID:</label>
+        <input type="number" id="fk_Afiliado_ID" name="fk_Afiliado_ID">
+
+        <label for="fk_profesional_ID">Profesional ID:</label>
+        <input type="number" id="fk_profesional_ID" name="fk_profesional_ID">
+
+        <div class="button-container">
+            <button type="button" id="btnConsultar">Consultar</button>
+            <button type="button" id="btnCrear">Crear</button>
+        </div>
+    </form>
+</body>
+
+</html>

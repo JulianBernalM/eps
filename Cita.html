@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Citas - EPS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff8f0;
+      padding: 40px;
+    }
+    form {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+    h2 {
+      color: #d2691e;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 15px;
+      margin-right: 10px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #d2691e;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #a0522d;
+    }
+  </style>
+</head>
+<body>
+  <h2>Gestión de Citas</h2>
+  <form id="citaForm">
+    <label for="Fecha">Fecha</label>
+    <input type="datetime-local" id="Fecha" name="Fecha">
+    
+    <label for="Estado">Estado:</label>
+    <select id="Estado" name="Estado" required>
+      <option value="">Seleccione...</option>
+      <option value="agendada">agendada</option>
+      <option value="no asistida">no asistida</option>
+      <option value="cancelada">cancelada</option>
+    </select>
+    
+    <label for="fk_afiliado_ID">Afiliado ID:</label>
+    <input type="number" id="fk_afiliado_ID" name="fk_afiliado_ID" required>
+    
+    <label for="fk_profesional_ID">Profesional ID:</label>
+    <input type="number" id="fk_profesional_ID" name="fk_profesional_ID" required>
+    
+    <label for="fk_centro_salud_ID">Centro de Salud ID:</label>
+    <input type="number" id="fk_centro_salud_ID" name="fk_centro_salud_ID" required>
+    
+    <label for="Motivo">Motivo:</label>
+    <textarea id="Motivo" name="Motivo" rows="3" required></textarea>
+    
+    <div>
+      <button type="button" id="btnConsultar">Consultar</button>
+      <button type="button" id="btnCrear">Crear</button>
+      <button type="button" id="btnActualizar">Actualizar</button>
+    </div>
+  </form>
+</body>
+</html> 
