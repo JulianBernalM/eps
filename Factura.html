@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Facturas - EPS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff8e6;
+      padding: 40px;
+    }
+
+    form {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    h2 {
+      color: #cc7a00;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      margin-top: 15px;
+      margin-right: 10px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #cc7a00;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #995c00;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Gestión de Facturas</h2>
+  <form id="facturaForm">
+    <label for="Fecha_emision">Fecha de Emisión:</label>
+    <input type="datetime-local" id="Fecha_emision" name="Fecha_emision" required>
+    <label for="Monto">Monto:</label>
+    <input type="number" id="Monto" name="Monto" required>
+    <label for="Vencimiento">Fecha de Vencimiento:</label>
+    <input type="datetime-local" id="Vencimiento" name="Vencimiento" required>
+    <label for="fk_afiliado_ID">Afiliado ID:</label>
+    <input type="number" id="fk_afiliado_ID" name="fk_afiliado_ID">
+    <label for="fk_cita_ID">Cita ID:</label>
+    <input type="number" id="fk_cita_ID" name="fk_cita_ID">
+    <label for="Estado_pago">Estado de Pago:</label>
+    <select id="Estado_pago" name="Estado_pago">
+      <option value="">Seleccione...</option>
+      <option value="Pagado">Pagado</option>
+      <option value="Pendiente">Pendiente</option>
+      <option value="Vencido">Vencido</option>
+      <option value="En proceso">En proceso</option>
+      <option value="Anulado">Anulado</option>
+    </select>
+    <div class="button-container">
+      <button type="button" id="btnConsultar">Consultar</button>
+      <button type="button" id="btnCrear">Crear</button>
+    </div>
+  </form>
+</body>
+
+</html>

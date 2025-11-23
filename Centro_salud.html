@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Centros de Salud - EPS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e6f7ff;
+      padding: 40px;
+    }
+
+    form {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    h2 {
+      color: #007acc;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      margin-top: 15px;
+      margin-right: 10px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007acc;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #005f99;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Gestión de Centros de Salud</h2>
+  <form id="centroSaludForm">
+    <label for="Nombre">Nombre:</label>
+    <input type="text" id="Nombre" name="Nombre" required>
+    <label for="Direccion">Dirección:</label>
+    <input type="text" id="Direccion" name="Direccion" required>
+    <label for="Telefono">Teléfono:</label>
+    <input type="text" id="Telefono" name="Telefono" required>
+    <label for="Ciudad">Ciudad:</label>
+    <input type="text" id="Ciudad" name="Ciudad" required>
+    <label for="Tipo">Tipo:</label>
+    <select id="Tipo" name="Tipo" required>
+      <option value="">Seleccione...</option>
+      <option value="Urgencias">Urgencias</option>
+      <option value="Consulta externa">Consulta externa</option>
+      <option value="Laboratorio">Laboratorio</option>
+      <option value="Imagenología">Imagenología</option>
+      <option value="Odontología">Odontología</option>
+      <option value="Vacunación">Vacunación</option>
+    </select>
+    <div class="button-container">
+      <button type="button" id="btnConsultar">Consultar</button>
+      <button type="button" id="btnCrear">Crear</button>
+    </div>
+  </form>
+</body>
+
+</html>
