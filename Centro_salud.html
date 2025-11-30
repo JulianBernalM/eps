@@ -72,13 +72,20 @@
   <form id="centroSaludForm">
     <label for="Nombre">Nombre:</label>
     <input type="text" id="Nombre" name="Nombre" required>
+
     <label for="Direccion">Dirección:</label>
     <input type="text" id="Direccion" name="Direccion" required>
+
     <label for="Telefono">Teléfono:</label>
     <input type="text" id="Telefono" name="Telefono" required>
+
     <label for="Ciudad">Ciudad:</label>
     <input type="text" id="Ciudad" name="Ciudad" required>
+
     <label for="Tipo">Tipo:</label>
+    <input type="text" id="Tipo" name="Tipo" required>
+
+    <!--
     <select id="Tipo" name="Tipo" required>
       <option value="">Seleccione...</option>
       <option value="Urgencias">Urgencias</option>
@@ -86,13 +93,76 @@
       <option value="Laboratorio">Laboratorio</option>
       <option value="Imagenología">Imagenología</option>
       <option value="Odontología">Odontología</option>
-      <option value="Vacunación">Vacunación</option>
-    </select>
+    </select>-->
+
     <div class="button-container">
       <button type="button" id="btnConsultar">Consultar</button>
       <button type="button" id="btnCrear">Crear</button>
     </div>
   </form>
-</body>
 
+  <script>
+    // Aquí puedes agregar la lógica de JavaScript para manejar los botones Consultar y Crear
+    const API_URL = 'http://localhost:8080/infoCentroSalud'; // Ajusta tu endpoint
+
+    // Evento para el botón "Consultar" (GET)
+    document.getElementById('btnConsultar').addEventListener('click', async () => {
+      const Nombre = document.getElementById("Nombre").value.trim();
+      if (!Nombre) {
+        alert("Por favor, ingrese el nombre del centro de salud para consultar.");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:8080/infoCentroSalud?Nombre=" + Nombre, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        if (!response.ok) throw new Error("Error al consultar.");
+
+        const data = await response.json();
+        document.getElementById("Direccion").value = data.Direccion;
+        document.getElementById("Telefono").value = data.Telefono;
+        document.getElementById("Ciudad").value = data.Ciudad;
+        document.getElementById("Tipo").value = data.Tipo;
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo consultar el centro de salud.");
+      }
+    });
+
+    // Evento para el botón "Crear" (POST)
+    document.getElementById('btnCrear').addEventListener('click', async () => {
+      const Nombre = document.getElementById("Nombre").value.trim();
+      const Direccion = document.getElementById("Direccion").value.trim();
+      const Telefono = document.getElementById("Telefono").value.trim();
+      const Ciudad = document.getElementById("Ciudad").value.trim();
+      const Tipo = document.getElementById("Tipo").value.trim();
+
+      if (!Nombre || !Direccion || !Telefono || !Ciudad || !Tipo) {
+        alert("Por favor, complete todos los campos.");
+        return;
+      }
+
+      const centroSalud = { Nombre, Direccion, Telefono, Ciudad, Tipo };
+
+      try {
+        const response = await feth("http://localhost:8080/crearCentroSalud", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(centroSalud)
+        });
+
+        if (!response.ok) throw new Error("Error al crear el centro de salud.");
+
+        alert("Centro de salud creado exitosamente.");
+        document.getElementById("centroSaludForm").reset();
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo crear el centro de salud.");
+      }
+    });
+  </script>  
+</body>
 </html>
