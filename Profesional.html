@@ -68,21 +68,74 @@
     <input type="number" id="Centro_salud_ID" name="Centro_salud_ID" required>
     
     <label for="Estado">Estado:</label>
-    <select id="Estado" name="Estado" required>
-      <option value="">Seleccione...</option>
-      <option value="Activo">Activo</option>
-      <option value="Inactivo">Inactivo</option>
-      <option value="Suspendido">Suspendido</option>
-      <option value="Vacaciones">Vacaciones</option>
-      <option value="Licencia">Licencia</option>
-      <option value="Permiso">Permiso</option>
-    </select>
+    <input type="text" id="Estado" name="Estado" required>
     
     <div>
       <button type="button" id="btnConsultar">Consultar</button>
       <button type="button" id="btnCrear">Crear</button>
-      
-    </div>
+    </div>  
   </form>
+
+  <script>
+    const API_URL = "http://localhost:8080/infoProfesional"; // Ajusta tu endpoint
+    // Evento para el botón "Consultar" (GET)
+    document.getElementById('btnConsultar').addEventListener("click", async () => {
+      const Nombre = document.getElementById('Nombre').value.trim();
+      if (!Nombre) {
+        alert("Por favor, ingresa un nombre para consultar.");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:8080/infoProfesional?Nombre="+Nombre, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        if (!response.ok) throw new Error("Error al consultar.");
+
+        const data = await response.json();
+        document.getElementById("Documento").value = data.Documento;
+		    document.getElementById("Especialidad").value = data.Especialidad;
+        document.getElementById("Centro_salud_ID").value = data.fk_centro_salud_ID;
+        document.getElementById("Estado").value = data.Estado;
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo consultar el profesional.");
+      }
+    });
+
+    // Evento para el botón "Crear" (POST)
+    document.getElementById('btnCrear').addEventListener("click", async () => {
+      const Nombre = document.getElementById('Nombre').value.trim();
+      const Documento = document.getElementById('Documento').value.trim();
+      const Especialidad = document.getElementById('Especialidad').value.trim();
+      const Centro_salud_ID = document.getElementById('Centro_salud_ID').value.trim();
+      const Estado = document.getElementById('Estado').value.trim();
+
+      if (!Nombre || !Documento || !Especialidad || !Centro_salud_ID || !Estado) {
+        alert("Por favor, completa todos los campos.");
+        return;
+      }
+
+      const profesional = { Nombre, Documento, Especialidad, Centro_salud_ID, Estado };
+      
+      try {
+        const response = await fetch("http://localhost:8080/crearProfesional", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(profesional)
+        });
+
+        if (!response.ok) throw new Error("Error al crear el profesional.");
+
+        alert("Profesional creado exitosamente.");
+        document.getElementById('profesionalForm').reset();
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo crear el profesional.");
+      }
+    });
+  </script>
 </body>
 </html>

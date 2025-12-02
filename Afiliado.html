@@ -68,20 +68,76 @@
     <input type="number" id="fk_plan_salud_ID" name="fk_plan_salud_ID" required>
     
     <label for="Estado">Estado:</label>
-    <select id="Estado" name="Estado" required>
-      <option value="">Seleccione...</option>
-      <option value="Activo">Activo</option>
-      <option value="Inactivo">Inactivo</option>
-      <option value="Suspendido">Suspendido</option>
-      <option value="Retirado">Retirado</option>
-      <option value="Fallecido">Fallecido</option>
-      <option value="Trasladado">Trasladado</option>
-    </select>
-    
+    <input type="text" id="Estado" name="Estado" required>
+        
     <div>
       <button type="button" id="btnConsultar">Consultar</button>
       <button type="button" id="btnCrear">Crear</button>
     </div>
   </form>
+
+  <script>
+    // Aquí puedes agregar la lógica de JavaScript para manejar los botones Consultar y Crear
+    const API_URL = 'http://localhost:8080/infoAfiliado'; // Ajusta tu endpoint
+
+    // Evento para el botón "Consultar" (GET)
+    document.getElementById('btnConsultar').addEventListener('click', async () => {
+      const Nombre_afiliado = document.getElementById("Nombre_afiliado").value.trim();
+      if (!Nombre_afiliado) {
+        alert("Por favor, ingrese el nombre del afiliado para consultar.");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:8080/infoAfiliado?Nombre_afiliado=" + Nombre_afiliado, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        if (!response.ok) throw new Error("Error al consultar.");
+
+        const data = await response.json();
+        document.getElementById("Documento").value = data.Documento;
+        document.getElementById("Telefono").value = data.Telefono;
+        document.getElementById("fk_plan_salud_ID").value = data.fk_plan_salud_ID;
+        document.getElementById("Estado").value = data.Estado;
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo consultar el afiliado.");
+      }
+    });
+
+    // Evento para el botón "Crear" (POST)
+    document.getElementById('btnCrear').addEventListener('click', async () => {
+      const Nombre_afiliado = document.getElementById("Nombre_afiliado").value.trim();
+      const Documento = document.getElementById("Documento").value.trim();
+      const Telefono = document.getElementById("Telefono").value.trim();
+      const fk_plan_salud_ID = document.getElementById("fk_plan_salud_ID").value.trim();
+      const Estado = document.getElementById("Estado").value.trim();
+      if (!Nombre_afiliado || !Documento || !Telefono || !fk_plan_salud_ID || !Estado) {
+        alert("Por favor, complete todos los campos.");
+        return;
+      }
+
+      const afiliado = { Nombre_afiliado, Documento, Telefono, fk_plan_salud_ID, Estado };
+
+      try {
+        console.info("Creando afiliado:", afiliado);
+        const response = await fetch("http://localhost:8080/crearAfiliado", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(afiliado)
+        });
+
+        if (!response.ok) throw new Error("Error al crear el afiliado.");
+
+        alert("Afiliado creado exitosamente.");
+        document.getElementById("afiliadoForm").reset();
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo crear el afiliado.");
+      }
+    });
+  </script>
 </body>
 </html>

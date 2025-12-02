@@ -148,7 +148,8 @@
       const centroSalud = { Nombre, Direccion, Telefono, Ciudad, Tipo };
 
       try {
-        const response = await feth("http://localhost:8080/crearCentroSalud", {
+        console.info("Creando centro de salud:", centroSalud);
+        const response = await fetch("http://localhost:8080/crearCentroSalud", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(centroSalud)
