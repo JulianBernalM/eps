@@ -76,7 +76,7 @@
   <h2>Historial Clínico</h2>
   <form id="historialForm">
     <label for="Fecha_consulta">Fecha de Consulta:</label>
-    <input type="datetime-local" id="Fecha_consulta" name="Fecha_consulta" required>
+    <input type="date" id="Fecha_consulta" name="Fecha_consulta" required>
     <label for="Diagnostico">Diagnóstico:</label>
     <input type="text" id="Diagnostico" name="Diagnostico" required>
     <label for="Tratamiento">Tratamiento:</label>
@@ -92,6 +92,73 @@
       <button type="button" id="btnCrear">Crear</button>
     </div>
   </form>
+
+  <script>
+
+    const API_URL = "http://localhost:8080/infoHistorialClinico";
+
+    //Evento para el botón "Consultar" (GET)
+    document.getElementById('btnConsultar').addEventListener('click', async () => {
+      const Fecha_consulta = document.getElementById('Fecha_consulta').value.trim();
+      if (!Fecha_consulta) {
+        alert('Por favor, ingrese una Fecha de Consulta para consultar.');
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:8080/infoHistorialClinico?Fecha_consulta=" + Fecha_consulta, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        if (!response.ok) throw new Error("Error al consultar.");
+
+        const data = await response.json();
+        document.getElementById("Diagnostico").value = data.Diagnostico;
+        document.getElementById("Tratamiento").value = data.Tratamiento;
+        document.getElementById("fk_afiliado_ID").value = data.fk_afiliado_ID;
+        document.getElementById("fk_cita_ID").value = data.fk_cita_ID;
+        document.getElementById("fk_Profesional_ID").value = data.fk_Profesional_ID;
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo consultar el historial clínico.");
+      }
+    });
+
+    // Evento para el botón "Crear" (POST)
+    document.getElementById('btnCrear').addEventListener('click', async () => {
+      const Fecha_consulta = document.getElementById("Fecha_consulta").value.trim();
+      const Diagnostico = document.getElementById("Diagnostico").value.trim();
+      const Tratamiento = document.getElementById("Tratamiento").value.trim();
+      const fk_afiliado_ID = parseInt(document.getElementById("fk_afiliado_ID").value.trim());
+      const fk_cita_ID = parseInt(document.getElementById("fk_cita_ID").value.trim());
+      const fk_Profesional_ID = parseInt(document.getElementById("fk_Profesional_ID").value.trim());
+
+      if (!Fecha_consulta || !Diagnostico || !Tratamiento || isNaN(fk_afiliado_ID) || isNaN(fk_cita_ID) || isNaN(fk_Profesional_ID)) {
+        alert("Por favor, complete todos los campos correctamente.");
+        return;
+      }
+
+      const historialClinico = { Fecha_consulta, Diagnostico, Tratamiento, fk_afiliado_ID, fk_cita_ID, fk_Profesional_ID };
+
+      try {
+        const response = await fetch("http://localhost:8080/crearHistorialClinico", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(historialClinico)
+        });
+
+        if (!response.ok) throw new Error("Error al crear el historial clínico.");
+
+        alert("Historial clínico creado exitosamente.");
+        document.getElementById("historialForm").reset();
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo crear el historial clínico.");
+      }
+    });
+  </script>
+
 </body>
 
 </html>

@@ -59,12 +59,8 @@
     <input type="datetime-local" id="Fecha" name="Fecha">
     
     <label for="Estado">Estado:</label>
-    <select id="Estado" name="Estado" required>
-      <option value="">Seleccione...</option>
-      <option value="agendada">agendada</option>
-      <option value="no asistida">no asistida</option>
-      <option value="cancelada">cancelada</option>
-    </select>
+    <input type="text" id="Estado" name="Estado" required>
+
     
     <label for="fk_afiliado_ID">Afiliado ID:</label>
     <input type="number" id="fk_afiliado_ID" name="fk_afiliado_ID" required>
@@ -81,8 +77,76 @@
     <div>
       <button type="button" id="btnConsultar">Consultar</button>
       <button type="button" id="btnCrear">Crear</button>
-      <button type="button" id="btnActualizar">Actualizar</button>
     </div>
   </form>
+
+  <script>        
+        const API_URL = "http://localhost:8080/infoCita"; 
+
+        //Evento para el botón "Consultar" (GET)
+        document.getElementById('btnConsultar').addEventListener('click', async () => {
+            const Fecha = document.getElementById('Fecha').value.trim();
+            if (!Fecha) {
+                alert('Por favor, ingrese una Fecha para consultar.');
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:8080/infoCita?Fecha=" + Fecha, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                if (!response.ok) throw new Error("Error al consultar.");
+
+                const data = await response.json();
+                document.getElementById("Fecha").value = data.Fecha;
+                document.getElementById("Estado").value = data.Estado;
+                document.getElementById("fk_afiliado_ID").value = data.fk_afiliado_ID;
+                document.getElementById("fk_profesional_ID").value = data.fk_profesional_ID;
+                document.getElementById("fk_centro_salud_ID").value = data.fk_centro_salud_ID;
+                document.getElementById("Motivo").value = data.Motivo;
+            } catch (error) {
+                console.error(error);
+                alert("No se pudo consultar la cita.");
+            }
+        });
+
+        // Evento para el botón "Crear" (POST)
+        document.getElementById('btnCrear').addEventListener('click', async () => {
+          // Obtener valores del formulario (declarar Fecha aquí)
+          const Fecha = document.getElementById('Fecha').value.trim();
+          const Estado = document.getElementById("Estado").value.trim();
+          const fk_afiliado_ID = parseInt(document.getElementById("fk_afiliado_ID").value.trim());
+          const fk_profesional_ID = parseInt(document.getElementById("fk_profesional_ID").value.trim());
+          const fk_centro_salud_ID = parseInt(document.getElementById("fk_centro_salud_ID").value.trim());
+          const Motivo = document.getElementById("Motivo").value.trim();
+
+          if (!Fecha || !Estado || isNaN(fk_afiliado_ID) || isNaN(fk_profesional_ID) || isNaN(fk_centro_salud_ID) || !Motivo) {
+            alert("Por favor, complete todos los campos correctamente.");
+            return;
+          }
+
+          // El input datetime-local suele entregar un valor en formato ISO sin segundos: YYYY-MM-DDTHH:MM
+          // Enviamos ese string y Jackson/Spring deberá mapearlo a LocalDateTime.
+          const cita = { Fecha, Estado, fk_afiliado_ID, fk_profesional_ID, fk_centro_salud_ID, Motivo };
+
+          try {
+            const response = await fetch("http://localhost:8080/crearCita", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(cita)
+            });
+
+            if (!response.ok) throw new Error("Error al crear la cita.");
+
+            alert("Cita creada exitosamente.");
+            document.getElementById("citaForm").reset();
+          } catch (error) {
+            console.error(error);
+            alert("No se pudo crear la cita.");
+          }
+        });
+    </script>
 </body>
 </html> 

@@ -71,29 +71,89 @@
   <h2>Gestión de Facturas</h2>
   <form id="facturaForm">
     <label for="Fecha_emision">Fecha de Emisión:</label>
-    <input type="datetime-local" id="Fecha_emision" name="Fecha_emision" required>
+    <input type="date" id="Fecha_emision" name="Fecha_emision" required>
     <label for="Monto">Monto:</label>
     <input type="number" id="Monto" name="Monto" required>
     <label for="Vencimiento">Fecha de Vencimiento:</label>
-    <input type="datetime-local" id="Vencimiento" name="Vencimiento" required>
+    <input type="date" id="Vencimiento" name="Vencimiento" required>
     <label for="fk_afiliado_ID">Afiliado ID:</label>
     <input type="number" id="fk_afiliado_ID" name="fk_afiliado_ID">
     <label for="fk_cita_ID">Cita ID:</label>
     <input type="number" id="fk_cita_ID" name="fk_cita_ID">
     <label for="Estado_pago">Estado de Pago:</label>
-    <select id="Estado_pago" name="Estado_pago">
-      <option value="">Seleccione...</option>
-      <option value="Pagado">Pagado</option>
-      <option value="Pendiente">Pendiente</option>
-      <option value="Vencido">Vencido</option>
-      <option value="En proceso">En proceso</option>
-      <option value="Anulado">Anulado</option>
-    </select>
+    <input type="text" id="Estado_pago" name="Estado_pago">    
+
     <div class="button-container">
       <button type="button" id="btnConsultar">Consultar</button>
       <button type="button" id="btnCrear">Crear</button>
     </div>
   </form>
+
+  <script>
+
+    const API_URL = "http://localhost:8080/infoFactura";
+
+    //Evento para el botón "Consultar" (GET)
+    document.getElementById('btnConsultar').addEventListener('click', async () => {
+      const Fecha_emision = document.getElementById('Fecha_emision').value.trim();
+      if (!Fecha_emision) {
+        alert('Por favor, ingrese una Fecha de Emisión para consultar.');
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:8080/infoFactura?Fecha_emision=" + Fecha_emision, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        if (!response.ok) throw new Error("Error al consultar.");
+
+        const data = await response.json();
+        document.getElementById("Monto").value = data.Monto;
+        document.getElementById("Vencimiento").value = data.Vencimiento;
+        document.getElementById("fk_afiliado_ID").value = data.fk_afiliado_ID;
+        document.getElementById("fk_cita_ID").value = data.fk_cita_ID;
+        document.getElementById("Estado_pago").value = data.Estado_pago;
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo consultar la factura.");
+      }
+    });
+
+    // Evento para el botón "Crear" (POST)
+    document.getElementById('btnCrear').addEventListener('click', async () => {
+      const Fecha_emision = document.getElementById("Fecha_emision").value.trim();
+      const Monto = document.getElementById("Monto").value.trim();
+      const Vencimiento = document.getElementById("Vencimiento").value.trim();
+      const fk_afiliado_ID = document.getElementById("fk_afiliado_ID").value.trim();
+      const fk_cita_ID = document.getElementById("fk_cita_ID").value.trim();
+      const Estado_pago = document.getElementById("Estado_pago").value.trim();
+
+      if (!Fecha_emision || !Monto || !Vencimiento || !fk_afiliado_ID || !fk_cita_ID || !Estado_pago) {
+        alert("Por favor, complete todos los campos.");
+        return;
+      }
+
+      const factura = { Fecha_emision, Monto, Vencimiento, fk_afiliado_ID, fk_cita_ID, Estado_pago };
+
+      try {
+        const response = await fetch("http://localhost:8080/crearFactura", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(factura)
+        });
+
+        if (!response.ok) throw new Error("Error al crear la factura.");
+
+        alert("Factura creada exitosamente.");
+        document.getElementById("facturaForm").reset();
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo crear la factura.");
+      }
+    });
+  </script>
 </body>
 
 </html>

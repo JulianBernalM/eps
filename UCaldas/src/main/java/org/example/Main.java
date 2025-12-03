@@ -151,7 +151,8 @@ public class Main {
         Conexion conn = new Conexion();
         try {
             Connection db = conn.getConnection();
-            PreparedStatement ps = db.prepareStatement("INSERT INTO usuario (Nombre, Contraseña, Email, Rol, fk_Afiliado_ID, fk_profesional_ID) VALUES (?,?,?,?,?,?)");
+            PreparedStatement ps = db.prepareStatement(
+                    "INSERT INTO usuario (Nombre, Contraseña, Email, Rol, fk_Afiliado_ID, fk_profesional_ID) VALUES (?,?,?,?,?,?)");
             ps.setString(1, user.getNombre());
             ps.setString(2, user.getContraseña());
             ps.setString(3, user.getEmail());
@@ -164,9 +165,9 @@ public class Main {
         }
     }
 
-    //------------------- Obtener informacion profesional -------------------//
+    // ------------------- Obtener informacion profesional -------------------//
     @GetMapping("/infoProfesional")
-    public static profesional getProfesional(@RequestParam(value="Nombre") String Nombre){
+    public static profesional getProfesional(@RequestParam(value = "Nombre") String Nombre) {
         Conexion conn = new Conexion();
         try {
             Connection db = conn.getConnection();
@@ -175,7 +176,7 @@ public class Main {
             ResultSet rs = st.executeQuery();
 
             profesional p = new profesional();
-            while(rs.next()){
+            while (rs.next()) {
                 p.setDocumento(rs.getString("Documento"));
                 p.setEspecialidad(rs.getString("Especialidad"));
                 p.setFk_centro_salud_ID(rs.getInt("fk_centro_salud_ID"));
@@ -184,20 +185,21 @@ public class Main {
             p.setNombre(Nombre);
             return p;
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error ejecutando la consulta profesional");
         }
         return null;
     }
 
-    //------------------- Crear profesional EN PROCESO -------------------//
+    // ------------------- Crear profesional -------------------//
     @PostMapping("/crearProfesional")
-    public void crearProfesional(@RequestBody profesional prof){
+    public void crearProfesional(@RequestBody profesional prof) {
         Conexion conn = new Conexion();
 
         try {
             Connection db = conn.getConnection();
-            PreparedStatement ps = db.prepareStatement("INSERT INTO profesional (Nombre, Documento, Especialidad, fk_centro_salud_ID, Estado) values (?,?,?,?,?)");
+            PreparedStatement ps = db.prepareStatement(
+                    "INSERT INTO profesional (Nombre, Documento, Especialidad, fk_centro_salud_ID, Estado) values (?,?,?,?,?)");
             ps.setString(1, prof.getNombre());
             ps.setString(2, prof.getDocumento());
             ps.setString(3, prof.getEspecialidad());
@@ -206,15 +208,14 @@ public class Main {
 
             ps.executeUpdate();
 
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    //------------------- Obtener informacion afiliado -------------------//
+    // ------------------- Obtener informacion afiliado -------------------//
     @GetMapping("/infoAfiliado")
-    public static afiliado getAfiliado(@RequestParam(value="Nombre_afiliado") String Nombre_afiliado){
+    public static afiliado getAfiliado(@RequestParam(value = "Nombre_afiliado") String Nombre_afiliado) {
         Conexion conn = new Conexion();
         try {
             Connection db = conn.getConnection();
@@ -223,7 +224,7 @@ public class Main {
             ResultSet rs = st.executeQuery();
 
             afiliado a = new afiliado();
-            while(rs.next()){
+            while (rs.next()) {
                 a.setDocumento(rs.getString("Documento"));
                 a.setTelefono(rs.getString("Telefono"));
                 a.setFk_plan_salud_ID(rs.getInt("fk_plan_salud_ID"));
@@ -232,20 +233,21 @@ public class Main {
             a.setNombre_afiliado(Nombre_afiliado);
             return a;
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error ejecutando la consulta afiliado");
         }
         return null;
     }
 
-    //------------------- Crear afiliado -------------------//
+    // ------------------- Crear afiliado -------------------//
     @PostMapping("/crearAfiliado")
-    public void crearAfiliado(@RequestBody afiliado aff){
+    public void crearAfiliado(@RequestBody afiliado aff) {
         Conexion conn = new Conexion();
 
         try {
             Connection db = conn.getConnection();
-            PreparedStatement ps = db.prepareStatement("INSERT INTO afiliado (Nombre_afiliado, Documento, Telefono, fk_plan_salud_ID, Estado) values (?,?,?,?,?)");
+            PreparedStatement ps = db.prepareStatement(
+                    "INSERT INTO afiliado (Nombre_afiliado, Documento, Telefono, fk_plan_salud_ID, Estado) values (?,?,?,?,?)");
             ps.setString(1, aff.getNombre_afiliado());
             ps.setString(2, aff.getDocumento());
             ps.setString(3, aff.getTelefono());
@@ -258,4 +260,145 @@ public class Main {
             throw new RuntimeException(e);
         }
     }
+
+    // ------------------- Obtener información de factura -------------------//
+    @GetMapping("/infoFactura")
+    public static factura getFactura(@RequestParam(value = "Fecha_emision") String Fecha_emision) {
+        Conexion conn = new Conexion();
+        try {
+            Connection db = conn.getConnection();
+            PreparedStatement st = db.prepareStatement("SELECT * FROM factura WHERE Fecha_emision = ?");
+            st.setString(1, Fecha_emision);
+            ResultSet rs = st.executeQuery();
+
+            factura f = new factura();
+            if (rs.next()) {
+                f.setFecha_emision(java.sql.Date.valueOf(rs.getString("Fecha_emision")));
+                f.setMonto(rs.getFloat("Monto"));
+                f.setVencimiento(java.sql.Date.valueOf(rs.getString("Vencimiento")));
+                f.setFk_afiliado_ID(rs.getInt("fk_afiliado_ID"));
+                f.setFk_cita_ID(rs.getInt("fk_cita_ID"));
+                f.setEstado_pago(rs.getString("Estado_pago"));
+            }
+            return f;
+        } catch (Exception e) {
+            System.out.println("Error ejecutando la consulta de factura: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // ------------------- Crear factura -------------------//
+    @PostMapping("/crearFactura")
+    public void crearFactura(@RequestBody factura facturaNueva) {
+        Conexion conn = new Conexion();
+        try {
+            Connection db = conn.getConnection();
+            PreparedStatement ps = db.prepareStatement(
+                    "INSERT INTO factura (Fecha_emision, Monto, Vencimiento, fk_afiliado_ID, fk_cita_ID, Estado_pago) VALUES (?,?,?,?,?,?)");
+            ps.setString(1, facturaNueva.getFecha_emision().toString());
+            ps.setFloat(2, facturaNueva.getMonto());
+            ps.setString(3, facturaNueva.getVencimiento().toString());
+            ps.setInt(4, facturaNueva.getFk_afiliado_ID());
+            ps.setInt(5, facturaNueva.getFk_cita_ID());
+            ps.setString(6, facturaNueva.getEstado_pago());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+    // ------------------- Obtener información de cita FALTA POR TERMINAR -------------------//
+    @GetMapping("/infoCita")
+    public static cita getCita(@RequestParam(value = "Fecha") String Fecha) {
+        Conexion conn = new Conexion();
+        try {
+            Connection db = conn.getConnection();
+            PreparedStatement st = db.prepareStatement("SELECT * FROM cita WHERE Fecha = ?");
+            st.setString(1, Fecha); // Fecha en formato ISO-8601 string
+            ResultSet rs = st.executeQuery();
+
+            cita c = new cita();
+            if (rs.next()) {
+                c.setFecha(java.time.LocalDateTime.parse(rs.getString("Fecha")));
+                c.setEstado(rs.getString("Estado"));
+                c.setFk_afiliado_ID(rs.getInt("fk_afiliado_ID"));
+                c.setFk_profesional_ID(rs.getInt("fk_profesional_ID"));
+                c.setFk_centro_salud_ID(rs.getInt("fk_centro_salud_ID"));
+                c.setMotivo(rs.getString("Motivo"));
+            }
+            return c;
+        } catch (Exception e) {
+            System.out.println("Error ejecutando la consulta de cita: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // ------------------- Crear cita FALTA POR TERMINAR-------------------//
+    @PostMapping("/crearCita")
+    public void crearCita(@RequestBody cita citaNueva) {
+        Conexion conn = new Conexion();
+        try {
+            Connection db = conn.getConnection();
+            PreparedStatement ps = db.prepareStatement(
+                    "INSERT INTO cita (Fecha, Estado, fk_afiliado_ID, fk_profesional_ID, fk_centro_salud_ID, Motivo) VALUES (?,?,?,?,?,?)");
+            ps.setString(1, citaNueva.getFecha().toString());
+            ps.setString(2, citaNueva.getEstado());
+            ps.setInt(3, citaNueva.getFk_afiliado_ID());
+            ps.setInt(4, citaNueva.getFk_profesional_ID());
+            ps.setInt(5, citaNueva.getFk_centro_salud_ID());
+            ps.setString(6, citaNueva.getMotivo());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // ------------------- Obtener información de historial clínico -------------------//
+    @GetMapping("/infoHistorialClinico")
+    public static historial_clinico getHistorialClinico(@RequestParam(value = "Fecha_consulta") String Fecha_consulta) {
+        Conexion conn = new Conexion();
+        try {
+            Connection db = conn.getConnection();
+            PreparedStatement st = db.prepareStatement("SELECT * FROM historial_clinico WHERE Fecha_consulta = ?");
+            st.setString(1, Fecha_consulta);
+            ResultSet rs = st.executeQuery();
+
+            historial_clinico h = new historial_clinico();
+            if (rs.next()) {
+                h.setFecha_consulta(new java.util.Date(rs.getDate("Fecha_consulta").getTime()));
+                h.setDiagnostico(rs.getString("Diagnostico"));
+                h.setTratamiento(rs.getString("Tratamiento"));
+                h.setFk_afiliado_ID(rs.getInt("fk_afiliado_ID"));
+                h.setFk_cita_ID(rs.getInt("fk_cita_ID"));
+                h.setFk_Profesional_ID(rs.getInt("fk_Profesional_ID"));
+            }
+            return h;
+        } catch (Exception e) {
+            System.out.println("Error ejecutando la consulta de historial clínico: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // ------------------- Crear historial clínico -------------------//
+    @PostMapping("/crearHistorialClinico")
+    public void crearHistorialClinico(@RequestBody historial_clinico historialNuevo) {
+        Conexion conn = new Conexion();
+        try {
+            Connection db = conn.getConnection();
+            PreparedStatement ps = db.prepareStatement(
+                    "INSERT INTO historial_clinico (Fecha_consulta, Diagnostico, Tratamiento, fk_afiliado_ID, fk_cita_ID, fk_Profesional_ID) VALUES (?,?,?,?,?,?)");
+            ps.setDate(1, new java.sql.Date(historialNuevo.getFecha_consulta().getTime()));
+            ps.setString(2, historialNuevo.getDiagnostico());
+            ps.setString(3, historialNuevo.getTratamiento());
+            ps.setInt(4, historialNuevo.getFk_afiliado_ID());
+            ps.setInt(5, historialNuevo.getFk_cita_ID());
+            ps.setInt(6, historialNuevo.getFk_Profesional_ID());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
